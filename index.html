@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社会保険料 削減効果シミュレーション</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <title>社保チェッカー for 個人事業主</title> <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* 基本スタイル */
         body {
             font-family: 'Noto Sans JP', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f2f5; /* 落ち着いた背景色 */
+            background-color: #f0f2f5;
             color: #333;
-            font-size: 16px; /* 基本フォントサイズを少し大きく */
-            line-height: 1.7; /* 行間も少しゆったりと */
+            font-size: 16px;
+            line-height: 1.7;
+            overflow-x: hidden; /* 横スクロールバーを非表示にする（レスポンシブ対応優先） */
         }
 
         .container {
             background-color: #ffffff;
-            padding: 40px;
+            padding: 25px; /* モバイルではpaddingを少し小さく */
             border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08); /* 影を強化 */
-            max-width: 900px;
-            margin: 40px auto;
-            animation: fadeIn 0.8s ease-out; /* フェードインアニメーション */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            max-width: 100%; /* 親要素に合わせて広がるように */
+            margin: 20px auto; /* 上下のマージンも調整 */
+            animation: fadeIn 0.8s ease-out;
+            box-sizing: border-box; /* padding, borderをwidthに含める */
         }
 
         @keyframes fadeIn {
@@ -34,97 +35,98 @@
 
         h1 {
             text-align: center;
-            color: #2c3e50; /* 濃い目の落ち着いた色 */
-            margin-bottom: 35px; /* マージン調整 */
-            font-size: 2.3em; /* 少し大きく */
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 1.8em; /* モバイルでは少し小さく */
             font-weight: 700;
+            line-height: 1.3; /* 行間を調整 */
         }
 
         /* 入力フォーム */
         .input-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* レスポンシブ対応 */
-            gap: 25px; /* 要素間のスペース */
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* さらに小さめの画面にも対応 */
+            gap: 15px; /* モバイルではgapを小さく */
+            margin-bottom: 20px;
         }
 
         .input-group {
-            position: relative; /* バリデーションメッセージ用 */
+            position: relative;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: #555;
-            font-size: 0.98em; /* 少し大きく */
+            font-size: 0.95em;
         }
 
-        .input-group input[type="number"] {
+        .input-group input { /* input type="number" をinput に変更して適用 */
             width: 100%;
-            padding: 14px 15px; /* パディングを増やして高さを確保 */
+            padding: 12px 12px;
             border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1.15em; /* フォントサイズを大きく */
+            border-radius: 6px;
+            font-size: 1.05em;
             box-sizing: border-box;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            -webkit-appearance: none; /* iOSでのSafariのデフォルトスタイルをリセット */
-            -moz-appearance: textfield; /* Firefoxでのデフォルトスタイルをリセット */
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
         }
 
-        .input-group input[type="number"]:focus {
+        .input-group input:focus {
             border-color: #007bff;
             box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
             outline: none;
         }
 
-        /* 番号入力の矢印を非表示 */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
         .input-group .help-text {
-            font-size: 0.88em; /* 少し大きく */
+            font-size: 0.85em;
             color: #777;
-            margin-top: 8px;
-            line-height: 1.5;
+            margin-top: 6px;
+            line-height: 1.4;
         }
 
         .error-message {
             color: #e74c3c;
-            font-size: 0.88em; /* 少し大きく */
-            margin-top: 5px;
+            font-size: 0.85em;
+            margin-top: 3px;
             position: absolute;
-            bottom: -25px; /* 入力フィールドの下に配置（行間を考慮して調整） */
+            bottom: -22px;
             left: 0;
-            width: 100%; /* 長文エラー対策 */
+            width: 100%;
+            box-sizing: border-box;
         }
 
         /* ボタン */
         .button-container {
             text-align: center;
-            margin-top: 40px;
+            margin-top: 30px;
         }
 
         .calculate-btn {
-            padding: 14px 35px;
-            font-size: 1.2em;
-            background-color: #007bff; /* 主要なアクションカラー */
+            padding: 12px 30px;
+            font-size: 1.1em;
+            background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             font-weight: 600;
             box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-            min-width: 180px; /* 小さな画面でも一定の幅を確保 */
+            min-width: 150px;
         }
 
         .calculate-btn:hover {
             background-color: #0056b3;
-            transform: translateY(-2px); /* 少し浮き上がるエフェクト */
+            transform: translateY(-2px);
         }
 
         .calculate-btn:active {
@@ -134,44 +136,46 @@
 
         /* 結果テーブル */
         .results-section {
-            margin-top: 50px;
-            background-color: #f8f9fa; /* 軽く色付け */
+            margin-top: 40px;
+            background-color: #f8f9fa;
             border-radius: 10px;
-            padding: 30px;
+            padding: 20px; /* モバイルではpaddingを小さく */
             box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            overflow-x: auto; /* 横スクロールを許可 */
         }
 
         .results-section h2 {
             text-align: center;
             color: #2c3e50;
-            font-size: 2.0em; /* 少し大きく */
-            margin-bottom: 30px;
+            font-size: 1.6em; /* モバイルではさらに小さく */
+            margin-bottom: 20px;
             font-weight: 700;
         }
 
         .results-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
+            font-size: 0.9em; /* テーブルの基本フォントサイズを小さく */
         }
 
         .results-table th, .results-table td {
-            padding: 15px;
+            padding: 10px; /* テーブルセルpaddingを小さく */
             text-align: left;
-            border-bottom: 1px solid #eee; /* 細い区切り線 */
+            border-bottom: 1px solid #eee;
+            white-space: nowrap; /* セル内のテキストを改行しない */
         }
 
         .results-table th {
             background-color: #e9ecef;
             color: #555;
             font-weight: 600;
-            font-size: 0.95em;
+            font-size: 0.85em;
             text-transform: uppercase;
         }
 
         .results-table td {
             background-color: #ffffff;
-            font-size: 1.15em; /* 結果の文字を大きく */
             color: #444;
         }
 
@@ -181,31 +185,31 @@
 
         .results-table .highlight {
             font-weight: bold;
-            color: #e74c3c; /* 目立つ赤色 */
-            font-size: 1.25em; /* ハイライトをより目立つように */
+            color: #e74c3c;
+            font-size: 1em; /* ハイライトも少し小さく */
         }
 
         /* 注意事項 */
         .notes {
-            margin-top: 50px;
-            padding: 25px;
-            background-color: #e6f2ff; /* 明るいブルーの背景 */
-            border-left: 6px solid #007bff; /* アクセントカラーのボーダー */
-            border-radius: 8px;
+            margin-top: 40px;
+            padding: 15px; /* モバイルではpaddingを小さく */
+            background-color: #e6f2ff;
+            border-left: 5px solid #007bff;
+            border-radius: 6px;
             color: #34495e;
-            font-size: 0.9em;
-            line-height: 1.8;
+            font-size: 0.8em; /* 注意書きをさらに小さく */
+            line-height: 1.6;
             box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
         }
         .notes p {
-            margin: 8px 0;
+            margin: 6px 0;
         }
         .notes strong {
             color: #0056b3;
         }
 
-        /* モバイル向けメディアクエリ */
-        @media (max-width: 768px) {
+        /* モバイル向け微調整 */
+        @media (max-width: 600px) {
             body {
                 padding: 15px; /* 左右のパディングを少し狭く */
             }
@@ -216,39 +220,52 @@
             }
 
             h1 {
-                font-size: 1.8em; /* スマートフォンでさらに小さく */
-                margin-bottom: 30px;
-            }
-
-            .results-section {
-                padding: 20px;
-            }
-
-            .results-section h2 {
                 font-size: 1.6em;
+                margin-bottom: 25px;
             }
-
+            .input-grid {
+                grid-template-columns: 1fr; /* 一列に並べる */
+                gap: 10px;
+            }
+            .input-group label {
+                margin-bottom: 5px;
+                font-size: 0.9em;
+            }
+            .input-group input {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+            .button-container {
+                margin-top: 25px;
+            }
+            .calculate-btn {
+                font-size: 1em;
+                padding: 10px 25px;
+            }
+            .results-section h2 {
+                font-size: 1.4em;
+                margin-bottom: 15px;
+            }
+            .results-table {
+                font-size: 0.8em;
+            }
             .results-table th, .results-table td {
-                padding: 10px; /* テーブルのセルパディングを狭く */
-                font-size: 1em; /* テーブルのフォントサイズを調整 */
+                padding: 8px;
             }
-
-            .results-table .highlight {
-                font-size: 1.1em;
+            .notes {
+                padding: 12px;
+                font-size: 0.75em;
             }
-
-            .input-group .help-text, .error-message, .notes p {
-                font-size: 0.85em; /* 補足や注意書きを小さく */
+            .error-message {
+                font-size: 0.8em;
+                bottom: -20px;
             }
         }
-
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>社会保険料 削減効果シミュレーション</h1>
-
-        <div class="input-grid">
+        <h1>社保チェッカー for 個人事業主</h1> <div class="input-grid">
             <div class="input-group">
                 <label for="annualIncome">年収 (万円):</label>
                 <input type="number" id="annualIncome" placeholder="例: 300" min="0">
@@ -262,10 +279,10 @@
                 <p class="help-text">介護保険料（40歳以上）の判定に使用します。</p>
             </div>
             <div class="input-group">
-                <label for="kokuhoMembers">社会保険加入前の国民健康保険加入者数 (本人含む):</label>
+                <label for="kokuhoMembers">現在、国民健康保険に加入している世帯の人数 (ご自身と扶養家族):</label>
                 <input type="number" id="kokuhoMembers" placeholder="例: 1" min="1">
                 <div class="error-message" id="kokuhoMembersError"></div>
-                <p class="help-text">社会保険に加入する前の世帯で、国民健康保険に加入する方全員の人数です。</p>
+                <p class="help-text">現在、国民健康保険に加入している世帯の人数（ご自身と扶養家族）をご入力ください。</p>
             </div>
         </div>
 
@@ -286,13 +303,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>国民健康保険料 / 健康保険料 (介護含む)</td>
+                        <td>国民健康保険料 (介護含む)</td>
                         <td id="kokuhoBefore"></td>
                         <td id="kenpoAfter"></td>
                         <td rowspan="3" id="reductionEffect" class="highlight"></td>
                     </tr>
                     <tr>
-                        <td>国民年金保険料 / 厚生年金保険料</td>
+                        <td>国民年金保険料</td>
                         <td id="kokunenBefore"></td>
                         <td id="kouseiAfter"></td>
                     </tr>
@@ -308,6 +325,7 @@
         <div class="notes">
             <p><strong>【ご注意事項】</strong></p>
             <p>※この計算は、令和6年度（2024年度）の保険料率を前提とした月額試算です。</p>
+            <p>※本シミュレーションは、**個人事業主が社会保険（健康保険・厚生年金）に加入した場合**の保険料削減効果を試算するものです。</p>
             <p>※国民健康保険料は、ご入力いただいた年収から給与所得控除および基礎控除のみを考慮して簡易的に推定しています。</p>
             <p>※この国民健康保険料は、全国平均的なモデルに基づいています。お住まいの自治体によって計算方法や料率が大きく異なるため、あくまで目安としてご利用ください。</p>
             <p>※実際の保険料は、お住まいの自治体、ご加入の健康保険組合、扶養家族の状況、各種控除（住宅ローン控除、医療費控除、社会保険料控除など）、前年の所得などにより大きく異なります。</p>
