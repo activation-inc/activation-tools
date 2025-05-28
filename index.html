@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社保チェッカー for 個人事業主</title> <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <title>社保チェッカー for 個人事業主</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* 色の変数定義 (新しい色に設定) */
+        :root {
+            --primary-color: #ff69b4; /* ホットピンクのような明るいピンク */
+            --primary-dark-color: #e04a9d; /* 少し濃いピンク */
+            --light-bg-color: #ffe0f0; /* 薄いピンクの背景 */
+            --border-accent-color: #ff1493; /* ディープピンクのボーダー */
+            --shadow-color-rgba: rgba(255, 105, 180, 0.25); /* ピンク系の影 */
+            --shadow-dark-color-rgba: rgba(255, 20, 147, 0.3); /* 濃いピンク系の影 */
+        }
+
         /* 基本スタイル */
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -75,8 +86,8 @@
         }
 
         .input-group input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: var(--primary-color); /* 色変更 */
+            box-shadow: 0 0 0 3px var(--shadow-color-rgba); /* 色変更 */
             outline: none;
         }
 
@@ -113,25 +124,25 @@
         .calculate-btn {
             padding: 12px 30px;
             font-size: 1.1em;
-            background-color: #007bff;
+            background-color: var(--primary-color); /* 色変更 */
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             font-weight: 600;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+            box-shadow: 0 4px 10px var(--shadow-color-rgba); /* 色変更 */
             min-width: 150px;
         }
 
         .calculate-btn:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-dark-color); /* 色変更 */
             transform: translateY(-2px);
         }
 
         .calculate-btn:active {
             transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 2px 5px var(--shadow-dark-color-rgba); /* 色変更 */
         }
 
         /* 結果テーブル */
@@ -185,7 +196,7 @@
 
         .results-table .highlight {
             font-weight: bold;
-            color: #e74c3c;
+            color: #e74c3c; /* 目立つ赤色はそのまま維持 */
             font-size: 1em; /* ハイライトも少し小さく */
         }
 
@@ -193,19 +204,19 @@
         .notes {
             margin-top: 40px;
             padding: 15px; /* モバイルではpaddingを小さく */
-            background-color: #e6f2ff;
-            border-left: 5px solid #007bff;
+            background-color: var(--light-bg-color); /* 色変更 */
+            border-left: 5px solid var(--border-accent-color); /* 色変更 */
             border-radius: 6px;
             color: #34495e;
             font-size: 0.8em; /* 注意書きをさらに小さく */
             line-height: 1.6;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+            box-shadow: 0 2px 8px var(--shadow-color-rgba); /* 色変更 */
         }
         .notes p {
             margin: 6px 0;
         }
         .notes strong {
-            color: #0056b3;
+            color: var(--primary-dark-color); /* 色変更 */
         }
 
         /* モバイル向け微調整 */
@@ -265,7 +276,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>社保チェッカー for 個人事業主</h1> <div class="input-grid">
+        <h1>社保チェッカー for 個人事業主</h1>
+
+        <div class="input-grid">
             <div class="input-group">
                 <label for="annualIncome">年収 (万円):</label>
                 <input type="number" id="annualIncome" placeholder="例: 300" min="0">
@@ -326,10 +339,12 @@
             <p><strong>【ご注意事項】</strong></p>
             <p>※この計算は、令和6年度（2024年度）の保険料率を前提とした月額試算です。</p>
             <p>※本シミュレーションは、**個人事業主が社会保険（健康保険・厚生年金）に加入した場合**の保険料削減効果を試算するものです。</p>
+            <p>※国民健康保険料は、ご入力いただいた年収から給与所得控除および基礎控除のみを考慮して簡易的に推定しています。</p>
             <p>※この国民健康保険料は、全国平均的なモデルに基づいています。お住まいの自治体によって計算方法や料率が大きく異なるため、あくまで目安としてご利用ください。</p>
             <p>※実際の保険料は、お住まいの自治体、ご加入の健康保険組合、扶養家族の状況、各種控除（住宅ローン控除、医療費控除、社会保険料控除など）、前年の所得などにより大きく異なります。</p>
             <p>※保険料率は毎年見直されます。</p>
-            <p>※社会保険料を最低等級に固定するスキームは、税務上・法務上の専門知識が必要であり、将来の年金受給額や健康保険の給付額にも影響します。必ず専門家（社会保険労務士、税理士など）にご相談ください。</p> </div>
+            <p>※社会保険料を最低等級に固定するスキームは、税務上・法務上の専門知識が必要であり、将来の年金受給額や健康保険の給付額にも影響します。必ず専門家（社会保険労務士、税理士など）にご相談ください。</p>
+        </div>
     </div>
 
     <script src="script.js"></script>
