@@ -3,12 +3,13 @@
 // 協会けんぽ 標準報酬月額等級表 (健康保険・厚生年金共通)
 // 報酬月額(min, max)に対する標準報酬月額(ssm)と等級
 const standardMonthlySalaryBands = [
-    // === ここから修正：等級1が58,000円SSMに、以降の等級も正確に修正 ===
+    // === ここから修正 ===
     { min: 0, max: 62999, ssm: 58000, grade: 1 }, // 等級1: 報酬月額0〜62,999円 → 標準報酬月額58,000円
     { min: 63000, max: 72999, ssm: 68000, grade: 2 },
     { min: 73000, max: 82999, ssm: 78000, grade: 3 },
-    { min: 83000, max: 92999, ssm: 88000, grade: 4 }, // 以前の等級1は、この等級4に相当
-    { min: 93000, max: 101999, ssm: 98000, grade: 5 },
+    { min: 83000, max: 92999, ssm: 88000, grade: 4 }, // ここが以前の等級1に相当
+    // === ここまで修正 ===
+    { min: 93000, max: 101999, ssm: 98000, grade: 5 }, // 以前の等級2以降も等級番号がずれるため注意
     { min: 102000, max: 109999, ssm: 104000, grade: 6 },
     { min: 110000, max: 118999, ssm: 114000, grade: 7 },
     { min: 119000, max: 126999, ssm: 122000, grade: 8 },
@@ -81,7 +82,7 @@ const standardMonthlySalaryBands = [
 // careRateは介護保険料率（本人負担分、40歳以上の場合に加算）
 const healthInsuranceRates = {
     // rate: 0.04985, // 健康保険料率（東京都の例）
-    rate: 0.05040, // 健康保険料率（大阪府の例）← 大阪府の料率
+    rate: 0.05040, // 健康保険料率（大阪府の例）
     careRate: 0.0080 // 介護保険料率（全国一律）
 };
 
@@ -132,24 +133,12 @@ function calculateSalaryIncomeDeduction(annualIncomeYen) {
 
 // --- 2. 計算ロジック ---
 
-// 標準報酬月額を算出する関数 (今回は最低等級に固定するので直接は使用しないが、ロジックとして残す)
-// 注：この関数は calculateSocialInsurancePremiumsFixedLow では直接使われないが、一般的な等級計算ロジックとして保持
-function getStandardMonthlySalary(monthlySalary) {
-    for (const band of standardMonthlySalaryBands) {
-        if (monthlySalary >= band.min && monthlySalary <= band.max) {
-            return band.ssm;
-        }
-    }
-    // テーブルの範囲外の場合、最も高いSSMを返す（厚生年金の最高額650,000円など考慮し、テーブルの最終上限を用いる）
-    return standardMonthlySalaryBands[standardMonthlySalaryBands.length - 1].ssm;
-}
-
 // 社会保険料（健康保険、厚生年金、介護保険）を計算する関数
 // ここでは、社会保険加入後の保険料を**実際の最低等級に合わせて**計算する
 function calculateSocialInsurancePremiumsFixedLow(age) {
-    // 健康保険の最低標準報酬月額は58,000円 (協会けんぽの等級表より)
+    // 健康保険の最低標準報酬月額は58,000円
     const healthSsm = 58000;
-    // 厚生年金の最低標準報酬月額は65,000円 (報酬月額58,000円〜65,000円未満の場合、厚生年金は65,000円の標準報酬月額に該当)
+    // 厚生年金の最低標準報酬月額は65,000円 (58,000円の報酬月額は厚生年金では65,000円の標準報酬月額に該当)
     const pensionSsm = 65000; 
 
     const isCareRecipient = age >= 40; // 介護保険対象か
@@ -208,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return value.toLocaleString('ja-JP', { style: 'currency', currency: 'JPY', minimumFractionDigits: 0 });
     }
 
+    // バリデーション関数
     function validateAndShowError(inputElement, errorElement, min, max, message) {
         const value = parseFloat(inputElement.value);
         if (inputElement.value.trim() === '') {
@@ -225,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 結果表示をクリアする関数
     function clearResults() {
         kokuhoBeforeEl.textContent = '';
         kenpoAfterEl.textContent = '';
